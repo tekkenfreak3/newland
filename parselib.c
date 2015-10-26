@@ -30,18 +30,50 @@ struct value read_int(const char *str, bool *errored)
 
 struct value read_double(const char *str, bool *errored)
 {
-    if (*str++ == '#')
+    double denominator = 10.0;
+    
+    double value = 0.0;
+    while(isdigit(*str))
     {
-        if (isalnum(*str))
-        {
-            if (is_delimiter(*(str+1)))
-            {
-                return new_char_value(*str);
-            }
-        }
+        value *= 10;
+        value += (*str) - 0x30; // ascii digit to value
+        str++;
     }
-    *errored = true;
-    return new_unknown_value();    
+    
+    if (*(str++) != '.')
+    {
+        *errored = true;
+        return new_unknown_value();
+    }
+    while(isdigit(*str))
+    {
+        value += ((*str) - 0x30) / denominator; // ascii digit to value, divided to
+        // make it act fractional
+        denominator *= 10; // move onto next fractional digit
+        str++;
+    }
+    if (!is_delimiter(*str))
+    {
+        *errored = true;
+        return new_unknown_value();
+    }
+    printf("%f\n", value);
+    return new_double_value(value);
+
+}
+
+bool parse_as_int(const char *str)
+{
+    const char *current = str;
+    while(isdigit(*current)) {current++;}
+    if (*current == '.')
+    {
+        return false;
+    }
+    else
+    {
+        return true;
+    }
 }
 
 struct value read_char(const char *str, bool *errored)
@@ -71,7 +103,7 @@ struct value read_nil(const char *str, bool *errored)
 
 struct value read_value(const char *str)
 {
-    char *current = str;
+    const char *current = str;
     bool errored = false;
     struct value ret;
     enum value_type parsed_as;
@@ -95,9 +127,18 @@ struct value read_value(const char *str)
     }
     else if (isdigit(*current))
     {
-        printf("PARSING AS INT\n");
-        parsed_as = VAL_INT;
-        ret = read_int(current, &errored);
+        if (parse_as_int(current))
+        {
+            printf("PARSING AS INT\n");
+            parsed_as = VAL_INT;
+            ret = read_int(current, &errored);
+        }
+        else
+        {
+            printf("PARSING AS DOUBLE\n");
+            parsed_as = VAL_DOUBLE;
+            ret = read_double(current, &errored);
+        }
         if (errored)
             goto error_state;        
     }
