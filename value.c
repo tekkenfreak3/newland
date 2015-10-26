@@ -4,7 +4,7 @@
 #include "cons.h"
 
 const char *type_strings[] = {"nil", "int", "double", "char", "cons", "ref", "func",
-                                     "unknown"};
+                              "string", "unknown"};
 struct value value_copy(const struct value *value)
 {
     struct value ret = {.value = value->value, .t = value->t};
@@ -26,6 +26,15 @@ struct value new_double_value(double value)
 struct value new_char_value(char value)
 {
     struct value ret = {.value.c = value, .t = VAL_CHAR};
+    return ret;
+}
+
+struct value new_string_value(const char *value)
+{
+    struct value ret;
+    ret.value.s = malloc(strlen(value) * sizeof(char));
+    snprintf(ret.value.s, strlen(value) * sizeof(char) - 1, "%s", value);
+    ret.t = VAL_STRING;
     return ret;
 }
 
@@ -71,6 +80,9 @@ void print_value_debug(FILE *fp, const struct value *value)
     case VAL_CHAR:
         fprintf(fp, "%c", value->value.c);
         break;
+    case VAL_STRING:
+        fprintf(fp, "%s", value->value.s);
+        break;
     case VAL_CONS:
         print_cons(fp, value->value.cell);
         break;
@@ -99,6 +111,9 @@ void print_value(FILE *fp, const struct value *value)
         break;
     case VAL_CHAR:
         fprintf(fp, "%c", value->value.c);
+        break;
+    case VAL_STRING:
+        fprintf(fp, "%s", value->value.s);
         break;
     case VAL_CONS:
         print_cons(fp, value->value.cell);

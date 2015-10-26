@@ -19,9 +19,12 @@ int main(int argc, char *argv[])
         char *in = readline(name "> ");
         add_history(in);
         printf("%s\n", in);
-        struct value test = read_value(in);
-        print_value_debug(stdout, &test);
-        
+        if (*in != ';')
+        {
+            struct value test = read_value(in);
+
+            print_value_debug(stdout, &test);
+        }
         free(in);
     }
     return 0;

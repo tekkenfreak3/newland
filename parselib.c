@@ -92,6 +92,40 @@ struct value read_char(const char *str, bool *errored)
     return new_unknown_value();
 }
 
+struct value read_string(const char *str, bool *errored)
+{
+    const char *start;
+    char *tmp;
+    int length;
+    if (*str++ == '"')
+    {
+        start = str;
+    }
+    else
+    {
+        *errored = true;
+        return new_unknown_value();
+    }
+
+    while (*str != '"')
+    {
+        if (*str == '\n')
+        {
+            printf("Unmatched \"\n");
+            *errored = true;
+            return new_unknown_value();
+        }
+        str++;
+    }
+    length = str - start;
+    
+    tmp = malloc(length + 1);
+    snprintf(tmp, length, "%s", start);
+    struct value ret = new_string_value(tmp);
+    free(tmp);
+    return ret;
+}
+
 struct value read_nil(const char *str, bool *errored)
 {
     
@@ -114,6 +148,14 @@ struct value read_value(const char *str)
         printf("PARSING AS CHAR\n");
         parsed_as = VAL_CHAR;
         ret = read_char(current, &errored);
+        if (errored)
+            goto error_state;
+    }
+    if (*current == '"')
+    {
+        printf("PARSING AS STRING\n");
+        parsed_as = VAL_STRING;
+        ret = read_string(current, &errored);
         if (errored)
             goto error_state;
     }
@@ -142,6 +184,15 @@ struct value read_value(const char *str)
         if (errored)
             goto error_state;        
     }
+    
+    else if (*current == '(')
+    {
+        printf("PARSING AS FUNCTION\n");
+        parsed_as = VAL_FUNC;
+        ret = read_nil(current, &errored);
+        if (errored)
+            goto error_state;        
+    }
     else
     {
         parsed_as = VAL_UNKNOWN;
@@ -149,6 +200,7 @@ struct value read_value(const char *str)
         goto error_state;
     }
 
+    
     return ret;
     
 error_state:

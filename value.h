@@ -11,6 +11,7 @@ enum value_type
     VAL_CONS,
     VAL_REF,
     VAL_FUNC,
+    VAL_STRING,
     VAL_UNKNOWN // only used for parsing errors
 };
 struct value;
@@ -20,6 +21,7 @@ union value_val
     int i;
     double d;
     char c;
+    char *s;
     struct cons *cell;
     struct value *ref;
     void *func; // worry about that later
@@ -35,6 +37,7 @@ struct value value_copy(const struct value *value);
 struct value new_int_value(int value);
 struct value new_double_value(double value);
 struct value new_char_value(char value);
+struct value new_string_value(const char *value);
 struct value new_nil_value(void);
 struct value new_unknown_value(void);
 struct value new_cons_value(struct value car, struct cons *cdr);
