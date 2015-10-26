@@ -1,6 +1,10 @@
 #ifndef PARSELIB_H
 #define PARSELIB_H
 #include <stdbool.h>
+#include "value.h"
 
-bool isdelim(int character);
+bool is_delimeter(char c);
+struct value read_value(const char *string);
+
+
 #endif

@@ -10,7 +10,8 @@ enum value_type
     VAL_CHAR,
     VAL_CONS,
     VAL_REF,
-    VAL_FUNC
+    VAL_FUNC,
+    VAL_UNKNOWN // only used for parsing errors
 };
 struct value;
 
@@ -35,8 +36,14 @@ struct value new_int_value(int value);
 struct value new_double_value(double value);
 struct value new_char_value(char value);
 struct value new_nil_value(void);
+struct value new_unknown_value(void);
 struct value new_cons_value(struct value car, struct cons *cdr);
 struct value new_ref_value(struct value *value);
 
+
+extern const char *type_strings[];
+
+
 void print_value(FILE *fp,const struct value *value);
+void print_value_debug(FILE *fp,const struct value *value);
 #endif

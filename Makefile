@@ -8,7 +8,7 @@ CFLAGS = -Wall -Wextra -std=c11 -g
 LDFLAGS = -lreadline -lncurses
 BINARY = newland
 
-OBJS = newland.o cons.o value.o
+OBJS = newland.o cons.o value.o parselib.o
 all: newland clean
 newland: $(OBJS)
 

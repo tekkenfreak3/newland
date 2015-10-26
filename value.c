@@ -3,7 +3,8 @@
 #include "value.h"
 #include "cons.h"
 
-static const char *type_strings[] = {"nil", "int", "double", "char", "cons", "ref", "func"};
+const char *type_strings[] = {"nil", "int", "double", "char", "cons", "ref", "func",
+                                     "unknown"};
 struct value value_copy(const struct value *value)
 {
     struct value ret = {.value = value->value, .t = value->t};
@@ -47,6 +48,11 @@ struct value new_ref_value(struct value *value)
     return ret;
 }
 
+struct value new_unknown_value(void)
+{
+    struct value ret = {.value.ref = NULL, .t = VAL_UNKNOWN};
+    return ret;
+}
 
 void print_value_debug(FILE *fp, const struct value *value)
 {
@@ -72,7 +78,7 @@ void print_value_debug(FILE *fp, const struct value *value)
         fprintf(fp, "%p", value->value.ref);
         break;
     default:
-        fprintf(fp, "The fuck? Try passing a real value dumbass");
+        fprintf(fp, "Invalid value passed.");
         break;
     }
     fprintf(fp, "\n");

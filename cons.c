@@ -14,14 +14,11 @@ void print_cons(FILE *fp, const struct cons *c)
 {
     fprintf(fp, "(");
     print_value(fp, &(c->car));
-    fprintf(fp, " . ");
+ 
     if (c->cdr)
     {
+        fprintf(fp, " . ");
         print_cons(fp, c->cdr);
-    }
-    else
-    {
-        fprintf(fp, "_");
     }
 
     fprintf(fp, ")");
