@@ -3,7 +3,7 @@
 #include "value.h"
 #include "cons.h"
 
-const char *type_strings[] = {"nil", "int", "double", "char", "cons", "ref", "func",
+const char *type_strings[] = {"nil", "int", "double", "char", "cons", "ref", "func", "context",
                               "string", "unknown"};
 struct value value_copy(const struct value *value)
 {
@@ -35,6 +35,14 @@ struct value new_string_value(const char *value)
     ret.value.s = malloc(strlen(value) * sizeof(char));
     snprintf(ret.value.s, strlen(value) * sizeof(char) - 1, "%s", value);
     ret.t = VAL_STRING;
+    return ret;
+}
+
+struct value new_ctx_value(struct ctx *ctx)
+{
+    struct value ret;
+    ret.value.ctx = ctx;
+    ret.t = VAL_CTX;
     return ret;
 }
 
