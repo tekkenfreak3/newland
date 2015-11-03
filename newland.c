@@ -13,7 +13,7 @@
 int main(int argc, char *argv[])
 {
     printf("%s %f\n", name, version);
-
+    
     while (1)
     {
         char *in = readline(name "> ");

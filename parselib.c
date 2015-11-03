@@ -10,6 +10,27 @@ bool is_delimiter(char c)
     return (isspace(c)) || c == 0;// || c == '(' || c == ')')
 }
 
+bool is_balanced(const char *str)
+{
+    if (*str++ != '(')
+    {
+        return true; // if it's not a list, it's balanced
+    }
+
+    int unbalanced_parens = 1;
+
+    while (unbalanced_parens > 0)
+    {
+        if (*str == '\0')
+            return false;
+        if (*str == ')')
+            unbalanced_parens--;
+
+        str++;
+    }
+
+    return true;
+}
 struct value read_int(const char *str, bool *errored)
 {
     int value = 0;
@@ -188,7 +209,12 @@ struct value read_value(const char *str)
     
     else if (*current == '(')
     {
-        printf("PARSING AS FUNCTION\n");
+        printf("PARSING AS FUNCTION\n", current);
+        if (!is_balanced(current))
+        {
+            printf("Unbalanced parens in %s", current);
+            goto error_state;
+        }
         parsed_as = VAL_FUNC;
         ret = read_nil(current, &errored);
         if (errored)
@@ -205,6 +231,6 @@ struct value read_value(const char *str)
     return ret;
     
 error_state:
-    fprintf(stderr, "unable to parse %s, looked like a %s\n", current, type_strings[parsed_as]);
+    fprintf(stderr, "Unable to parse %s, looked like a %s\n", current, type_strings[parsed_as]);
     return ret;
 }
