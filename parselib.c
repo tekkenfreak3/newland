@@ -7,7 +7,7 @@
 
 bool is_delimiter(char c)
 {
-    return (isspace(c)) || c == '\0';// || c == '(' || c == ')')
+    return (isspace(c)) || c == 0;// || c == '(' || c == ')')
 }
 
 struct value read_int(const char *str, bool *errored)
@@ -80,6 +80,7 @@ struct value read_char(const char *str, bool *errored)
 {
     if (*str++ == '#')
     {
+        printf("CHARACTER %c %d", *str, *(str+1));
         if (isprint(*str))
         {
             if (is_delimiter(*(str+1)))
@@ -151,7 +152,7 @@ struct value read_value(const char *str)
         if (errored)
             goto error_state;
     }
-    if (*current == '"')
+    else if (*current == '"')
     {
         printf("PARSING AS STRING\n");
         parsed_as = VAL_STRING;
